@@ -1,6 +1,6 @@
 from ij import IJ
-from fr.cnrs.mri.commandProxy import IJCP
 from ij import Prefs
+from fr.cnrs.mri.ijso.commandProxy import IJCP
 
 ij = IJCP()
 

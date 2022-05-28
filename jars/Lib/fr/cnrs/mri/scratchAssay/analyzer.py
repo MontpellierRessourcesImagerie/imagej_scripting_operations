@@ -1,9 +1,9 @@
 from ij import IJ
 from ij.plugin.frame import RoiManager
 from ij.measure import ResultsTable
-from fr.cnrs.mri.commandProxy import IJCP
+from fr.cnrs.mri.ijso.commandProxy import IJCP
+from fr.cnrs.mri.ijso.operations import Operation
 from fr.cnrs.mri.scratchAssay.masks import CreateMaskFromVariance
-from fr.cnrs.mri.operations import Operation
 
 ij = IJCP()
  
