@@ -1,16 +1,19 @@
 from ij import IJ
 from ij import Prefs
+from fr.cnrs.mri.ijso.operations import Operation
+from fr.cnrs.mri.ijso.operations import IntOption
 from fr.cnrs.mri.ijso.commandProxy import IJCP
 
 ij = IJCP()
 
-class CreateMask(object):
+class CreateMask(Operation):
 
     def __init__(self, image):
+        Operation.__init__(self)
         self.inputImage = image
         self.mask = image.duplicate()
 
-    def run(self):
+    def execute(self):
         self.calculateFeature()
         self.setThresholds()
         self.convertToMask()
@@ -31,15 +34,21 @@ class CreateMaskFromVariance(CreateMask):
 
     def __init__(self, image, radius, threshold):
         CreateMask.__init__(self, image)
-        self.radius = radius
-        self.threshold = threshold
+        self.addOption(IntOption("radius", radius))
+        self.addOption(IntOption("threshold", threshold))
 
     def calculateFeature(self):
-        ij.variance(self.mask, radius = self.radius, stack = True)
+        ij.variance(self.mask, radius = self.getRadius(), stack = True)
         ij._8__bit(self.mask)
 
+    def getRadius(self):
+        return self.getOptions().get('radius').getValue()
+        
+    def getThreshold(self):
+        return self.getOptions().get('threshold').getValue()
+        
     def setThresholds(self):
-        IJ.setThreshold(self.mask, 0, self.threshold);   
+        IJ.setThreshold(self.mask, 0, self.getThreshold())
     
 class CreateMaskFromFindEdges(CreateMask):
 

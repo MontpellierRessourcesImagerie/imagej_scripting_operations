@@ -11,9 +11,9 @@ class ScratchAssayAnalyzer(Operation):
     
     def __init__(self, image):
         Operation.__init__(self)
+        self.createMaskMethod = None
         self.measureInPixlUnits = False
         self.inputImage = image
-        self.createMaskMethod = None
         self.closeIterations = None
         self.minimalArea = None
         
