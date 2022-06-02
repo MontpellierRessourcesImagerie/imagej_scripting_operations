@@ -8,12 +8,11 @@ ij = IJCP()
 
 class CreateMask(Operation):
 
-    def __init__(self, image):
+    def __init__(self):
         Operation.__init__(self)
-        self.inputImage = image
-        self.mask = image.duplicate()
 
     def execute(self):
+        self.mask = self.inputImage.duplicate()
         self.calculateFeature()
         self.setThresholds()
         self.convertToMask()
@@ -32,28 +31,31 @@ class CreateMask(Operation):
     
 class CreateMaskFromVariance(CreateMask):
 
-    def __init__(self, image, radius, threshold):
-        CreateMask.__init__(self, image)
-        self.addOption(IntOption("radius", radius))
-        self.addOption(IntOption("threshold", threshold))
+    radiusLabel = "radius"
+    thresholdLabel = "threshold"
+    
+    def __init__(self, radius, threshold):
+        CreateMask.__init__(self)
+        self.addOption(IntOption(CreateMaskFromVariance.radiusLabel, radius))
+        self.addOption(IntOption(CreateMaskFromVariance.thresholdLabel, threshold))
 
     def calculateFeature(self):
         ij.variance(self.mask, radius = self.getRadius(), stack = True)
         ij._8__bit(self.mask)
 
     def getRadius(self):
-        return self.getOptions().get('radius').getValue()
+        return self.getOption(CreateMaskFromVariance.radiusLabel).getValue()
         
     def getThreshold(self):
-        return self.getOptions().get('threshold').getValue()
+        return self.getOption(CreateMaskFromVariance.thresholdLabel).getValue()
         
     def setThresholds(self):
         IJ.setThreshold(self.mask, 0, self.getThreshold())
     
 class CreateMaskFromFindEdges(CreateMask):
 
-    def __init__(self, image):
-        CreateMask.__init__(self, image)
+    def __init__(self):
+        CreateMask.__init__(self)
 
     def calculateFeature(self):
         ij.findEdges(self.mask, stack = True)
