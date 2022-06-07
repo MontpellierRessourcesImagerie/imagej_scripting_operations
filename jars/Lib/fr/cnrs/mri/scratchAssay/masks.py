@@ -12,7 +12,6 @@ class CreateMask(Operation):
         Operation.__init__(self)
 
     def execute(self):
-        self.mask = self.inputImage.duplicate()
         self.calculateFeature()
         self.setThresholds()
         self.convertToMask()
@@ -24,10 +23,8 @@ class CreateMask(Operation):
         pass
 
     def convertToMask(self):
-        ij.convertToMask(self.mask, method="Default", background="Dark", black=True)    
+        ij.convertToMask(self.getResultImage(), method="Default", background="Dark", black=True)    
         
-    def getMask(self):
-        return self.mask
     
 class CreateMaskFromVariance(CreateMask):
 
@@ -40,8 +37,8 @@ class CreateMaskFromVariance(CreateMask):
         self.addOption(IntOption(CreateMaskFromVariance.thresholdLabel, threshold))
 
     def calculateFeature(self):
-        ij.variance(self.mask, radius = self.getRadius(), stack = True)
-        ij._8__bit(self.mask)
+        ij.variance(self.getResultImage(), radius = self.getRadius(), stack = True)
+        ij._8__bit(self.getResultImage())
 
     def getRadius(self):
         return self.getOption(CreateMaskFromVariance.radiusLabel).getValue()
@@ -50,7 +47,7 @@ class CreateMaskFromVariance(CreateMask):
         return self.getOption(CreateMaskFromVariance.thresholdLabel).getValue()
         
     def setThresholds(self):
-        IJ.setThreshold(self.mask, 0, self.getThreshold())
+        IJ.setThreshold(self.getResultImage(), 0, self.getThreshold())
     
 class CreateMaskFromFindEdges(CreateMask):
 
@@ -58,10 +55,11 @@ class CreateMaskFromFindEdges(CreateMask):
         CreateMask.__init__(self)
 
     def calculateFeature(self):
-        ij.findEdges(self.mask, stack = True)
-        ij.invert(self.mask, stack = True)
-        if self.mask.bitDepth==24:
-            ij._8__bit(self.mask)
+        mask = self.getResultImage()
+        ij.findEdges(mask, stack = True)
+        ij.invert(mask, stack = True)
+        if mask.bitDepth==24:
+            ij._8__bit(mask)
 
     def setThresholds(self):
-        IJ.setAutoThreshold(self.mask, "Percentile dark");
+        IJ.setAutoThreshold(self.getResultImage(), "Percentile dark");

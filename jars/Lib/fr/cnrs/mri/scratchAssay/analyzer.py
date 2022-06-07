@@ -20,6 +20,7 @@ class ScratchAssayAnalyzer(Operation):
     
     def __init__(self):
         Operation.__init__(self)
+        self.runInplace = True
         items = [CreateMaskFromVariance(20, 1), CreateMaskFromFindEdges()]
         self.addOption(ChoiceOption(ScratchAssayAnalyzer.methodOptionLabel, items[0], items))
         self.addOption(BoolOption(ScratchAssayAnalyzer.measureInPixelUnitsLabel, False))
@@ -64,10 +65,10 @@ class ScratchAssayAnalyzer(Operation):
     def createMask(self):
         self.setStatus("create mask")
         createMaskMethod = self.getCreateMaskMethod()
-        createMaskMethod.setInputImage(self.inputImage)
+        createMaskMethod.setInputImage(self.getResultImage())
         createMaskMethod.run()
         self.setProgress(0.25)
-        return createMaskMethod.getMask()
+        return createMaskMethod.getResultImage()
         
     def morphologicalCloseOnTissue(self, mask):
         self.setStatus("morphological close on tissue")
@@ -80,7 +81,7 @@ class ScratchAssayAnalyzer(Operation):
         roiManager = RoiManager.getRoiManager()
         roiManager.reset()
         ij.analyzeParticles(mask, size=str(self.getMinimalArea())+"-Infinity", circularity="0.00-1.00", show="Nothing", add=True, stack=True)
-        roiManager.runCommand(self.inputImage, "Show All")
+        roiManager.runCommand(self.getResultImage(), "Show All")
         self.rois = list(RoiManager.getInstance().getRoisAsArray())        
         self.setProgress(0.75)
     
