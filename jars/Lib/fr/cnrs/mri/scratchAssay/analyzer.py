@@ -6,6 +6,7 @@ from fr.cnrs.mri.ijso.operations import Operation
 from fr.cnrs.mri.ijso.operations import ChoiceOption
 from fr.cnrs.mri.ijso.operations import BoolOption
 from fr.cnrs.mri.ijso.operations import IntOption
+from fr.cnrs.mri.ijso.measure import Measurements
 from fr.cnrs.mri.scratchAssay.masks import CreateMaskFromVariance
 from fr.cnrs.mri.scratchAssay.masks import CreateMaskFromFindEdges
 
@@ -89,5 +90,6 @@ class ScratchAssayAnalyzer(Operation):
         self.setStatus("measue")
         ResultsTable.getResultsTable().reset() 
         RoiManager.getInstance().runCommand("measure")
+        self.measurements = Measurements.fromSystemResultsTable()
         self.setProgress(1)
 
